@@ -9,7 +9,7 @@ from api.video_stats import (
 )
 
 # Define the local timezone
-local_tz = pendulum.timezone("Europe/Malta")
+local_tz = pendulum.timezone("Europe/Berlin")
 
 # Default Args
 default_args = {
