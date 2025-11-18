@@ -1,14 +1,17 @@
 import requests
 import json
 from datetime import date
-import os
-from dotenv import load_dotenv
-load_dotenv(dotenv_path="./.env")
 
-API_KEY = os.getenv("API_KEY")
-CHANNEL_HANDLE = 'TaylorSwift'
+
+from airflow.decorators import task
+from airflow.models import Variable
+
+
+API_KEY = Variable.get("API_KEY")
+CHANNEL_HANDLE = Variable.get("CHANNEL_HANDLE")
 maxResults = 50
 
+@task
 def get_playlist_id ():
 
     try:
@@ -26,7 +29,7 @@ def get_playlist_id ():
     except requests.exceptions.RequestException as e:
         raise e
     
-
+@task
 def get_video_ids(playlistId):
     video_ids = []
     pageToken = None
@@ -56,8 +59,7 @@ def get_video_ids(playlistId):
     except requests.exceptions.RequestException as e:
         raise e
 
-
-
+@task
 def extract_video_data(video_ids):
     extracted_data  = []
 
@@ -97,6 +99,7 @@ def extract_video_data(video_ids):
     except requests.exceptions.RequestException as e:
         raise e
 
+@task
 def save_to_json (extracted_data):
     file_path = f"./data/yt_ts_data_{date.today()}.json"
 
