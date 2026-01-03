@@ -10,7 +10,7 @@ from api.video_stats import (
     save_to_json
 )
 
-from datawharehouse.dwh import staging_tabel, core_table
+from datawharehouse.dwh import staging_table, core_table
 from dataquality.soda import yt_elt_data_quality
 
 # Define the local timezone
@@ -56,7 +56,7 @@ with DAG(
     dagrun_timeout=timedelta(hours=1),  # ✔ moved out of default_args
 ) as dag:
     
-    update_staging = staging_tabel()
+    update_staging = staging_table()
     update_core = core_table()
 
     update_staging >> update_core

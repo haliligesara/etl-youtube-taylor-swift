@@ -46,6 +46,8 @@ def get_video_ids(playlistId):
 
             for item in data.get('items', []):
                 video_id = item['contentDetails']['videoId']
+                if video_id in ('oWVYzCPs3nE', 'e7HLU5-0VU4'):
+                    continue
                 video_ids.append(video_id)
 
             pageToken = data.get('nextPageToken')
