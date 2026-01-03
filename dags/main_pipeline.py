@@ -11,6 +11,7 @@ from api.video_stats import (
 )
 
 from datawharehouse.dwh import staging_tabel, core_table
+from dataquality.soda import yt_elt_data_quality
 
 # Define the local timezone
 local_tz = pendulum.timezone("Europe/Berlin")
@@ -24,6 +25,9 @@ default_args = {
     "email": "data@engineers.com",
     "start_date": datetime(2025, 1, 1, tzinfo=local_tz),
 }
+
+staging_schema = "staging"
+core_schema = "core"
 
 with DAG(
     dag_id='produce_json',
@@ -56,3 +60,18 @@ with DAG(
     update_core = core_table()
 
     update_staging >> update_core
+
+with DAG(
+    dag_id='data_quality',
+    default_args=default_args,
+    description='DAG to check the data quality on both layers in the db',
+    schedule_interval='0 16 * * *',     # ✔ correct for most Airflow versions
+    catchup=False,
+    max_active_runs=1,                  # ✔ moved out of default_args
+    dagrun_timeout=timedelta(hours=1),  # ✔ moved out of default_args
+) as dag:
+    
+    soda_validat_staging = yt_elt_data_quality(staging_schema)
+    soda_validate_core = yt_elt_data_quality(core_schema)
+
+    soda_validat_staging >> soda_validate_core
