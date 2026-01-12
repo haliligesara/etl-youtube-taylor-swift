@@ -80,18 +80,18 @@ jobs:
                     include/*
                     docker-compose.yaml
             - name: Set up Docker Compose
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-tests.outputs.any_changed == 'true'
               run: docker compose up -d --build
             - name: Run Unit and Integration Tests
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-tests.outputs.any_changed == 'true'
               run: docker exec -t airflow-worker sh -c "pytest tests/ -v"
             - name: Run End to End DAG Tests
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-tests.outputs.any_changed == 'true'
               run: |
                 DAG_NAMES = ("produce_json", "update_db", "data_quality")
                 for DAG in ${DAG_NAMES[@]}; do
                   docker exec -t airflow-webserver sh -c "airflow dags test $DAG"
                 done
             - name: Tear down Docker Compose
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-tests.outputs.any_changed == 'true'
               run: docker compose down
