@@ -5,9 +5,8 @@ from airflow.models import Variable, Connection, DagBag
 
 @pytest.fixture
 def api_key():
-    with mock.patch.dict("os.environ",AIRFLOW_VAR_API_KEY="MOCK_KEY123"):
+    with mock.patch.dict("os.environ", {"AIRFLOW_VAR_API_KEY": "MOCK_KEY123"}):
         yield Variable.get("API_KEY")
-
 
 @pytest.fixture
 def mock_postgres_conn_vars():
@@ -20,7 +19,7 @@ def mock_postgres_conn_vars():
     )
     conn_uri = conn.get_uri()
 
-    with mock.patch.dict("os.environ", AIRFLOW_CONN_POSTGRES_DB_YT_ELT=conn_uri):
+    with mock.patch.dict("os.environ", {"AIRFLOW_CONN_POSTGRES_DB_YT_ELT": conn_uri}):
         yield Connection.get_connection_from_secrets(conn_id="POSTGRES_DB_YT_ELT")
     
 @pytest.fixture
@@ -30,7 +29,7 @@ def dagbag():
 @pytest.fixture()
 def airflow_variable():
     def get_airflow_variable(variable_name):
-        env_var = f"AIRFLOW_VAR_{variable_name.upper}"
+        env_var = f"AIRFLOW_VAR_{variable_name.upper()}"
         return os.getenv(env_var)
     
     return get_airflow_variable
