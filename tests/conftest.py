@@ -21,7 +21,7 @@ def mock_postgres_conn_vars():
     conn_uri = conn.get_uri()
 
     with mock.patch.dict("os.environ", AIRFLOW_CONN_POSTGRES_DB_YT_ELT=conn_uri):
-        yield Connection.get_connection_from_secrets(con_id="POSTGRES_DB_YT_ELT")
+        yield Connection.get_connection_from_secrets(conn_id="POSTGRES_DB_YT_ELT")
     
 @pytest.fixture
 def dagbag():
